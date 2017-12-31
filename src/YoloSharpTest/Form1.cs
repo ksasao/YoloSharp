@@ -43,6 +43,8 @@ namespace YoloSharpTest
             {
                 _yolo = new Yolo(model.ConfigPath, model.WeightsPath, model.NamesPath);
                 this.pictureBox1.AllowDrop = true;
+                string title = $"{Path.GetFileNameWithoutExtension(model.NamesPath)} - YoloSharp";
+                this.Text = title;
                 AppendMessage($"{model.ConfigPath},{model.WeightsPath},{model.NamesPath} を読み込みました。\r\n画像を Drag&Drop してください。");
             }
             else

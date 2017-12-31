@@ -1,12 +1,14 @@
-# YoloSharp
+﻿# YoloSharp
 A .NET wrapper for OpenCV Yolo (darknet)
 
 ## 動作環境
 - Windows 10 (64bit)
 - .NET Framework 4.5.2 以降
+- [Microsoft Visual C++ 2015 再頒布可能パッケージ Update 3](https://www.microsoft.com/ja-jp/download/details.aspx?id=53840)
+  - ダウンロードボタンを押した後、vc_redist.x64.exe にチェックを入れて 次へ をクリック
 
 ## サンプル
-- [サンプルアプリケーション](https://1drv.ms/f/s!AtVeMj_gKPtbpoUW41zX4dyXA32q2g) (2017/12/30更新)
+- [YoloSharp Sample Application](https://1drv.ms/f/s!AtVeMj_gKPtbpoUW41zX4dyXA32q2g) (2017/12/31更新)
 
 画像ファイルを Drag & Drop すると物体を判別し、結果を result フォルダに保存します。
 
@@ -30,3 +32,6 @@ A .NET wrapper for OpenCV Yolo (darknet)
 
 また、
 ```C:\opencv331\build\x64\vc14\bin``` から、opencv_world331.dll (または opencv_world331d.dll) をコピーし、model フォルダに、*.cfg, *.weight, *.names ファイルを置いてください。なお、上記のサンプルにもこれらのファイルが含まれています。
+
+実行には [Microsoft Visual C++ 2015 再頒布可能パッケージ Update 3](https://www.microsoft.com/ja-jp/download/details.aspx?id=53840) の x64版 (vc_redist.x64.exe) が必要です。Visual Studio 2015 が入っている環境ではなくても動作します。
+  - concrt140.dll, msvcp140.dll, vcruntime140.dll を利用しています
