@@ -20,6 +20,7 @@ namespace YoloSharpTest
 
         Bitmap _bitmap = null;
         int _count;
+        string _currentExt;
 
         Brush _brush = new SolidBrush(Color.FromArgb(128, 40, 40, 0));
         Pen _penBg = new Pen(Color.White, 5);
@@ -66,6 +67,7 @@ namespace YoloSharpTest
                     {
                         _bitmap.Dispose();
                     }
+                    _currentExt = Path.GetExtension(filename);
                     _bitmap = ImageLoader.Load(filename);
 
                     this.pictureBox1.Image = _bitmap;
@@ -135,7 +137,13 @@ namespace YoloSharpTest
                 Directory.CreateDirectory(_resultPath);
             }
             string basename = Path.Combine(_resultPath,DateTime.Now.ToString("yyyyMMdd_HHmmss") + string.Format("_{0:000}",_count++));
-            bmp.Save(basename + ".png");
+            if (_currentExt.ToLower().StartsWith(".j"))
+            {
+                bmp.Save(basename + ".jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+            }else
+            {
+                bmp.Save(basename + ".png");
+            }
             using (StreamWriter sw = new StreamWriter(basename + ".csv", false, new UTF8Encoding(true)))
             {
                 foreach(var l in result)
