@@ -128,6 +128,7 @@ namespace YoloSharp {
 					results->Add(d);
 				}
 			}
+			cvReleaseImage(&iplImage);
 			return results->ToArray();
 		}
 		 
