@@ -8,7 +8,7 @@ A .NET wrapper for OpenCV Yolo (darknet)
   - ダウンロードボタンを押した後、vc_redist.x64.exe にチェックを入れて 次へ をクリック
 
 ## サンプル
-- [YoloSharp Sample Application](https://1drv.ms/f/s!AtVeMj_gKPtbpoUW41zX4dyXA32q2g) (2017/12/31更新)
+- [YoloSharp Sample Application](https://1drv.ms/f/s!AtVeMj_gKPtbpoUW41zX4dyXA32q2g) (2018/1/28更新)
 
 画像ファイルを Drag & Drop すると物体を判別し、結果を result フォルダに保存します。
 
