@@ -66,11 +66,8 @@ namespace YoloSharpTest
                     {
                         _bitmap.Dispose();
                     }
-                    // ファイルを握りっぱなしにしないようにする
-                    using (Bitmap tmp = new Bitmap(filename))
-                    {
-                        _bitmap = new Bitmap(tmp);
-                    }
+                    _bitmap = ImageLoader.Load(filename);
+
                     this.pictureBox1.Image = _bitmap;
 
                     // 推論
