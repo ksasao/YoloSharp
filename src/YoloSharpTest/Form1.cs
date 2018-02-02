@@ -23,8 +23,6 @@ namespace YoloSharpTest
         string _currentExt;
 
         Brush _brush = new SolidBrush(Color.FromArgb(128, 40, 40, 0));
-        Pen _penBg = new Pen(Color.White, 5);
-        Font _font = new Font(FontFamily.GenericSerif, 20, FontStyle.Bold);
 
         Yolo _yolo;
 
@@ -81,17 +79,19 @@ namespace YoloSharpTest
                     // 結果を描画
                     using (Graphics g = Graphics.FromImage(_bitmap))
                     {
+                        g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+                        float scale = _bitmap.Width / 800f;
                         foreach (var data in result)
                         {
                             Data d = data;
                             Color c = ConvertHsvToRgb(d.Id * 1.0f/_yolo.ClassNames.Length, 1, 0.8f);
-                            Pen pen = new Pen(c, 3);
+                            Pen pen = new Pen(c, 3f * scale);
+                            Font font = new Font(FontFamily.GenericSerif, 20 * scale, FontStyle.Bold);
 
-                            g.DrawRectangle(_penBg, d.X, d.Y, d.Width, d.Height);
+                            g.FillRectangle(_brush, d.X, d.Y, d.Width, 35 * scale);
                             g.DrawRectangle(pen, d.X, d.Y, d.Width, d.Height);
-                            g.FillRectangle(_brush, d.X, d.Y, d.Width, 35);
                             string status = $"{d.Name} ({d.Confidence * 100:00.0}%)";
-                            g.DrawString(status, _font, Brushes.White, new PointF(d.X, d.Y));
+                            g.DrawString(status, font, Brushes.White, new PointF(d.X, d.Y + 3f * scale));
 
                             pen.Dispose();
                         }
@@ -224,8 +224,6 @@ namespace YoloSharpTest
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             _brush.Dispose();
-            _penBg.Dispose();
-            _font.Dispose();
         }
     }
 }
