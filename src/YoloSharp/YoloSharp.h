@@ -81,6 +81,14 @@ namespace YoloSharp {
 		cli::array<Data^>^ Detect(Bitmap^ bitmap, float confidenceThreshold) {
 			return detectMain(bitmap, confidenceThreshold);
 		}
+		/// <summary>
+		/// Return class names of this model
+		/// </summary>
+		property cli::array<System::String^>^ ClassNames {
+			cli::array<System::String^>^ get(){
+				return _names;
+			}
+		}
 	private:
 		void initialize(System::String^ config, System::String^ weights, System::String^ names) {
 			_config = config;

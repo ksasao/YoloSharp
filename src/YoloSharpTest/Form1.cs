@@ -24,7 +24,6 @@ namespace YoloSharpTest
 
         Brush _brush = new SolidBrush(Color.FromArgb(128, 40, 40, 0));
         Pen _penBg = new Pen(Color.White, 5);
-        Pen _pen = new Pen(Color.Gold, 3);
         Font _font = new Font(FontFamily.GenericSerif, 20, FontStyle.Bold);
 
         Yolo _yolo;
@@ -85,11 +84,16 @@ namespace YoloSharpTest
                         foreach (var data in result)
                         {
                             Data d = data;
+                            Color c = ConvertHsvToRgb(d.Id * 1.0f/_yolo.ClassNames.Length, 1, 0.8f);
+                            Pen pen = new Pen(c, 3);
+
                             g.DrawRectangle(_penBg, d.X, d.Y, d.Width, d.Height);
-                            g.DrawRectangle(_pen, d.X, d.Y, d.Width, d.Height);
+                            g.DrawRectangle(pen, d.X, d.Y, d.Width, d.Height);
                             g.FillRectangle(_brush, d.X, d.Y, d.Width, 35);
                             string status = $"{d.Name} ({d.Confidence * 100:00.0}%)";
                             g.DrawString(status, _font, Brushes.White, new PointF(d.X, d.Y));
+
+                            pen.Dispose();
                         }
                     }
                     this.pictureBox1.Image = _bitmap;
@@ -153,11 +157,74 @@ namespace YoloSharpTest
                 }
             }
         }
+
+
+        /// <summary>
+        /// Convert HSV to RGB
+        /// See <a href="https://dobon.net/vb/dotnet/graphics/hsv.html">https://dobon.net/vb/dotnet/graphics/hsv.html</a> 
+        /// </summary>
+        /// <param name="h">Hue (0-1)</param>
+        /// <param name="s">Saturation (0-1)</param>
+        /// <param name="v">Brightness (0-1)</param>
+        /// <returns></returns>
+        public Color ConvertHsvToRgb(float h, float s, float v)
+        {
+
+            float r, g, b;
+            if (s == 0)
+            {
+                r = v; g = v; b = v;
+            }
+            else
+            {
+                h = h * 6f;
+                int i = (int)Math.Floor(h);
+                float f = h - i;
+                float p = v * (1f - s);
+                float q;
+                if (i % 2 == 0)
+                {
+                    q = v * (1f - (1f - f) * s);
+                }
+                else
+                {
+                    q = v * (1f - f * s);
+                }
+
+                switch (i)
+                {
+                    case 0:
+                        r = v; g = q; b = p;
+                        break;
+                    case 1:
+                        r = q; g = v; b = p;
+                        break;
+                    case 2:
+                        r = p; g = v; b = q;
+                        break;
+                    case 3:
+                        r = p; g = q; b = v;
+                        break;
+                    case 4:
+                        r = q; g = p; b = v;
+                        break;
+                    case 5:
+                        r = v; g = p; b = q;
+                        break;
+                    default:
+                        throw new ArgumentException("Illegal Hue value (0-1)", "hsv");
+                }
+            }
+
+            return Color.FromArgb(
+                (int)Math.Round(r * 255f),
+                (int)Math.Round(g * 255f),
+                (int)Math.Round(b * 255f));
+        }
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             _brush.Dispose();
             _penBg.Dispose();
-            _pen.Dispose();
             _font.Dispose();
         }
     }
