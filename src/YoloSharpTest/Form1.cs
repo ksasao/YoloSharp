@@ -85,15 +85,17 @@ namespace YoloSharpTest
                         {
                             Data d = data;
                             Color c = ConvertHsvToRgb(d.Id * 1.0f/_yolo.ClassNames.Length, 1, 0.8f);
-                            Pen pen = new Pen(c, 3f * scale);
-                            Font font = new Font(FontFamily.GenericSerif, 20 * scale, FontStyle.Bold);
 
-                            g.FillRectangle(_brush, d.X, d.Y, d.Width, 35 * scale);
+                            Pen pen = new Pen(c, 3f * scale);
+                            Font font = new Font(FontFamily.GenericSerif, 20f * scale, FontStyle.Bold);
+
+                            g.FillRectangle(_brush, d.X, d.Y, d.Width, 35f * scale);
                             g.DrawRectangle(pen, d.X, d.Y, d.Width, d.Height);
                             string status = $"{d.Name} ({d.Confidence * 100:00.0}%)";
                             g.DrawString(status, font, Brushes.White, new PointF(d.X, d.Y + 3f * scale));
 
                             pen.Dispose();
+                            font.Dispose();
                         }
                     }
                     this.pictureBox1.Image = _bitmap;
