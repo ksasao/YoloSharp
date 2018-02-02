@@ -29,6 +29,7 @@ namespace YoloSharp {
 	{
 	public:
 		System::String^ Name;
+		int Id;
 		float Confidence;
 		int X;
 		int Y;
@@ -36,9 +37,10 @@ namespace YoloSharp {
 		int Height;
 
 	public:
-		Data(System::String^ name, System::Single confidence, System::Int32 x, System::Int32 y, System::Int32 width, System::Int32 height)
+		Data(System::String^ name, System::Int32 id, System::Single confidence, System::Int32 x, System::Int32 y, System::Int32 width, System::Int32 height)
 		{
 			Name = name;
+			Id = id;
 			Confidence = confidence;
 			X = x;
 			Y = y;
@@ -124,7 +126,7 @@ namespace YoloSharp {
 					int yy = (int)((cy - height / 2.) * frame.rows);
 					int ww = (int)(width * frame.cols);
 					int hh = (int)(height * frame.rows);
-					Data^ d = gcnew Data(_names[objectClass], confidence, xx, yy, ww, hh);
+					Data^ d = gcnew Data(_names[objectClass], objectClass, confidence, xx, yy, ww, hh);
 					results->Add(d);
 				}
 			}
