@@ -85,5 +85,48 @@ namespace YoloSharpTest
             }
             return result;
         }
+
+        /// <summary>
+        /// 画像が特定のアスペクト比となるように周囲に余白(黒背景)を追加します
+        /// </summary>
+        /// <param name="bmp">操作対象となるビットマップ</param>
+        /// <param name="aspectRatio">アスペクト比(width/height)</param>
+        /// <returns>余白を追加したビットマップ</returns>
+        public static Bitmap AddBorder(Bitmap bmp, float aspectRatio)
+        {
+            if(aspectRatio <= 0f)
+            {
+                return new Bitmap(bmp);
+            }
+            float a = 1f * bmp.Width / bmp.Height;
+            if(a < aspectRatio) // 元画像が指定したアスペクト比より縦長なので左右に余白を追加
+            {
+                Bitmap output = new Bitmap((int)(bmp.Height * aspectRatio), bmp.Height);
+                using(Graphics g = Graphics.FromImage(output))
+                {
+                    g.Clear(Color.Black);
+
+                    int s = (output.Width - bmp.Width) / 2;
+                    Rectangle dest = new Rectangle(s, 0, bmp.Width, bmp.Height);
+                    Rectangle src = new Rectangle(0, 0, bmp.Width, bmp.Height);
+                    g.DrawImage(bmp, dest, src, GraphicsUnit.Pixel);
+                }
+                return output;
+            }
+            else // 元画像が指定したアスペクト比より横長なので上下に余白を追加
+            {
+                Bitmap output = new Bitmap(bmp.Width, (int)(bmp.Width / aspectRatio));
+                using (Graphics g = Graphics.FromImage(output))
+                {
+                    g.Clear(Color.Black);
+
+                    int s = (output.Height - bmp.Height) / 2;
+                    Rectangle dest = new Rectangle(0, s, bmp.Width, bmp.Height);
+                    Rectangle src = new Rectangle(0, 0, bmp.Width, bmp.Height);
+                    g.DrawImage(bmp, dest, src, GraphicsUnit.Pixel);
+                }
+                return output;
+            }
+        }
     }
 }

@@ -21,6 +21,7 @@ namespace YoloSharpTest
         Bitmap _bitmap = null;
         int _count;
         string _currentExt;
+        float _aspectRatio;
 
         Brush _brush = new SolidBrush(Color.FromArgb(128, 40, 40, 0));
 
@@ -36,6 +37,7 @@ namespace YoloSharpTest
         private void LoadModel(string modelPath)
         {
             ModelPath model = new ModelPath(modelPath);
+            _aspectRatio = model.FixedAspectRatio;
             ClearMessage();
             if (model.Found)
             {
@@ -66,7 +68,10 @@ namespace YoloSharpTest
                         _bitmap.Dispose();
                     }
                     _currentExt = Path.GetExtension(filename);
-                    _bitmap = ImageLoader.Load(filename);
+                    using(Bitmap tmp = ImageLoader.Load(filename))
+                    {
+                        _bitmap = ImageLoader.AddBorder(tmp, _aspectRatio);
+                    }
 
                     this.pictureBox1.Image = _bitmap;
 
