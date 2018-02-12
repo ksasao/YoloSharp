@@ -22,9 +22,9 @@ namespace YoloSharpTest
         {
             try
             {
-                ConfigPath = Directory.GetFiles(modelPath, "*.cfg")[0];
-                WeightsPath = Directory.GetFiles(modelPath, "*.weights")[0];
-                NamesPath = Directory.GetFiles(modelPath, "*.names")[0];
+                ConfigPath = GetLatestFile(modelPath, "*.cfg");
+                WeightsPath = GetLatestFile(modelPath, "*.weights");
+                NamesPath = GetLatestFile(modelPath, "*.names");
 
                 string aspect = Path.Combine(modelPath,"fixed.aspect");
                 float result;
@@ -40,6 +40,12 @@ namespace YoloSharpTest
             {
                 Found = false;
             }
+        }
+        private string GetLatestFile(string path, string ext)
+        {
+            return Path.Combine(path,(new DirectoryInfo(path).EnumerateFiles(ext)
+                    .OrderByDescending(f => f.CreationTime)
+                    .FirstOrDefault()).Name);
         }
     }
 }
