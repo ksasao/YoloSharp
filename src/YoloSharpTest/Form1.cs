@@ -15,7 +15,7 @@ namespace YoloSharpTest
 {
     public partial class Form1 : Form
     {
-        string _modelPath = @"model";
+        string _modelPath = @"modelG";
         string _resultPath = @"result";
 
         Bitmap _bitmap = null;
@@ -27,6 +27,7 @@ namespace YoloSharpTest
         Brush _brush = new SolidBrush(Color.FromArgb(128, 40, 40, 0));
 
         Yolo _yolo;
+        Yolo _yolo2;
 
         public Form1()
         {
@@ -36,6 +37,8 @@ namespace YoloSharpTest
             var model = LoadModel(_modelPath);
             _yolo = model.Item1;
             _aspectRatio = model.Item2;
+            var model2 = LoadModel("model");
+            _yolo2 = model2.Item1;
         }
 
         private Tuple<Yolo,float> LoadModel(string modelPath)
@@ -84,6 +87,7 @@ namespace YoloSharpTest
                     Stopwatch watch = new Stopwatch();
                     watch.Start();
                     var result = _yolo.Detect(_bitmap, 0.5f);
+                    var result2 = _yolo.Detect(_bitmap, 0.5f);
                     watch.Stop();
 
                     // 結果を描画
@@ -95,6 +99,22 @@ namespace YoloSharpTest
                         {
                             Data d = data;
                             Color c = ConvertHsvToRgb(d.Id * 1.0f/_yolo.ClassNames.Length, 1, 0.8f);
+
+                            Pen pen = new Pen(c, 3f * scale);
+                            Font font = new Font(FontFamily.GenericSerif, 20f * scale, FontStyle.Bold);
+
+                            g.FillRectangle(_brush, d.X, d.Y, d.Width, 35f * scale);
+                            g.DrawRectangle(pen, d.X, d.Y, d.Width, d.Height);
+                            string status = $"{d.Name} ({d.Confidence * 100:00.0}%)";
+                            g.DrawString(status, font, Brushes.White, new PointF(d.X, d.Y + 3f * scale));
+
+                            pen.Dispose();
+                            font.Dispose();
+                        }
+                        foreach (var data in result2)
+                        {
+                            Data d = data;
+                            Color c = ConvertHsvToRgb(d.Id * 1.0f / _yolo2.ClassNames.Length, 1, 0.8f);
 
                             Pen pen = new Pen(c, 3f * scale);
                             Font font = new Font(FontFamily.GenericSerif, 20f * scale, FontStyle.Bold);

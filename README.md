@@ -20,7 +20,7 @@ A .NET wrapper for OpenCV Yolo (darknet)
 なお、OpenCV 版の Yolo は、現在 CPU版のみ対応しています。
 
 ## ビルド方法
-1．opencv-3.4.3-vc14_vc15.exe を[ダウンロード](https://opencv.org/opencv-3-4-1.html)して、c:\opencv343 フォルダに展開します
+1．opencv-3.4.3-vc14_vc15.exe を[ダウンロード](https://github.com/opencv/opencv/releases/tag/3.4.3)して、c:\opencv343 フォルダに展開します
 ![Download Path](https://user-images.githubusercontent.com/179872/47597072-640b1500-d9c6-11e8-96b5-003fe12cdb24.png)
 
 ２．Visual Studio 2017 で src/YoloSharp.sln を開きビルドします。プラットフォームは x64 を設定してください。1. で c:\opencv343 以外のフォルダに展開した場合は、YoloSharp のプロパティを開き、構成プロパティ > VC++ディレクトリ 以下の インクルードディレクトリ、参照ディレクトリ、ライブラリディレクトリ にそれぞれのパスを追加してください。
