@@ -79,9 +79,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\opencv341\build\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\opencv341\build\x64\vc15\lib;$(LibraryPath)</LibraryPath>
-    <ReferencePath>C:\opencv341\build\x64\vc15\bin;$(VC_ReferencesPath_x64);</ReferencePath>
+    <IncludePath>C:\opencv343\build\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\opencv343\build\x64\vc15\lib;$(LibraryPath)</LibraryPath>
+    <ReferencePath>C:\opencv343\build\x64\vc15\bin;$(VC_ReferencesPath_x64);</ReferencePath>
     <TargetName>$(ProjectName)d</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -89,9 +89,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\opencv341\build\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\opencv341\build\x64\vc15\lib;$(LibraryPath)</LibraryPath>
-    <ReferencePath>C:\opencv341\build\x64\vc15\bin;$(ReferencePath)</ReferencePath>
+    <IncludePath>C:\opencv343\build\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\opencv343\build\x64\vc15\lib;$(LibraryPath)</LibraryPath>
+    <ReferencePath>C:\opencv343\build\x64\vc15\bin;$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -115,7 +115,7 @@
       <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>opencv_world341d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opencv_world343d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -136,7 +136,7 @@
       <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>opencv_world341.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opencv_world343.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
