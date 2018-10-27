@@ -54,7 +54,6 @@ namespace YoloSharp {
 	public ref class Yolo
 	{
 	internal:
-		static int model_count = 0;
 		const size_t network_width = 416;
 		const size_t network_height = 416;
 		const float default_threshold = 0.24f;
