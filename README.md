@@ -29,7 +29,7 @@ A .NET wrapper for OpenCV Yolo (darknet)
 
 また、リンカー > 入力 > 追加の依存ファイルに opencv_world341.lib を追加 (Releaseビルドの場合。Debugビルドの場合は、opencv_world341d.lib) してください。
 
-![Linker directory](https://user-images.githubusercontent.com/179872/34452204-9ba7ab44-ed7d-11e7-9c7b-60ff8c5c889c.png)
+![Linker directory](https://user-images.githubusercontent.com/179872/47597536-7edf8880-d9ca-11e8-976c-73535cd941c4.png)
 
 .NET Framework で新たにビルドする場合は、プロパティ > ビルド > プラットフォームターゲット を、Any CPU ではなく x64 にしてください。
 
