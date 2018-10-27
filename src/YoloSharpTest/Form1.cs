@@ -23,6 +23,7 @@ namespace YoloSharpTest
         string _currentExt;
         float _aspectRatio;
 
+
         Brush _brush = new SolidBrush(Color.FromArgb(128, 40, 40, 0));
 
         Yolo _yolo;
@@ -31,17 +32,20 @@ namespace YoloSharpTest
         {
             InitializeComponent();
             // プロパティ > ビルド > プラットフォームターゲット > x64 でビルドしてください
-            LoadModel(_modelPath);
+            ClearMessage();
+            var model = LoadModel(_modelPath);
+            _yolo = model.Item1;
+            _aspectRatio = model.Item2;
         }
 
-        private void LoadModel(string modelPath)
+        private Tuple<Yolo,float> LoadModel(string modelPath)
         {
             ModelPath model = new ModelPath(modelPath);
-            _aspectRatio = model.FixedAspectRatio;
-            ClearMessage();
+            Yolo yolo = null;
+            float aspectRatio = model.FixedAspectRatio;
             if (model.Found)
             {
-                _yolo = new Yolo(model.ConfigPath, model.WeightsPath, model.NamesPath);
+                yolo = new Yolo(model.ConfigPath, model.WeightsPath, model.NamesPath);
                 this.pictureBox1.AllowDrop = true;
                 string processName = Path.GetFileNameWithoutExtension(Process.GetCurrentProcess().MainModule.FileName);
                 string title = $"{Path.GetFileNameWithoutExtension(model.NamesPath)} - {processName}";
@@ -52,6 +56,7 @@ namespace YoloSharpTest
             {
                 AppendMessage($"ファイルが見つかりませんでした。{_modelPath} フォルダに .cfg, .weights, .names ファイルを1つずつ配置してください。");
             }
+            return Tuple.Create<Yolo,float>(yolo,aspectRatio);
         }
 
         private void Detect(string[] files)

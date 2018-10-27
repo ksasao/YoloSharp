@@ -54,6 +54,7 @@ namespace YoloSharp {
 	public ref class Yolo
 	{
 	internal:
+		static int model_count = 0;
 		const size_t network_width = 416;
 		const size_t network_height = 416;
 		const float default_threshold = 0.24f;
@@ -68,6 +69,12 @@ namespace YoloSharp {
 		/// </summary>
 		Yolo(System::String^ config, System::String^ weights, System::String^ names){
 			initialize(config, weights, names);
+		}
+		/// <summary>
+		/// Destructor
+		/// </summary>
+		~Yolo() {
+			delete _net;
 		}
 		/// <summary>
 		/// Detect Objects
@@ -98,8 +105,7 @@ namespace YoloSharp {
 			std::string modelConfiguration = convertToStdString(_config);
 			std::string modelBinary = convertToStdString(_weights);
 
-			static dnn::Net n = readNetFromDarknet(modelConfiguration, modelBinary);
-			_net = &n;
+			this->_net = new dnn::Net(readNetFromDarknet(modelConfiguration, modelBinary));
 		}
 
 		cli::array<Data^>^ detectMain(Bitmap^ bitmap, float confidenceThreshold) {
