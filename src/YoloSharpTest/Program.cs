@@ -16,6 +16,8 @@ namespace YoloSharpTest
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            // C:\opencv343\build\x64\vc15\bin から opencv_world343.dll または opencv_world343d.dll を
+            // YoloSharpTest.exe と同じフォルダにコピーしてください
             Application.Run(new Form1());
         }
     }
