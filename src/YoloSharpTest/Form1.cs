@@ -84,7 +84,6 @@ namespace YoloSharpTest
                     Stopwatch watch = new Stopwatch();
                     watch.Start();
                     var result = _yolo.Detect(_bitmap, 0.5f);
-                    var result2 = _yolo.Detect(_bitmap, 0.5f);
                     watch.Stop();
 
                     // 結果を描画
