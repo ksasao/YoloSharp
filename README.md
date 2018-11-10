@@ -1,5 +1,5 @@
 ﻿# YoloSharp
-A .NET wrapper for OpenCV Yolo (darknet)
+A .NET wrapper for OpenCV Yolo v2/v3 (darknet)
 
 ## 動作環境
 - Windows 10 (64bit)
@@ -17,7 +17,7 @@ A .NET wrapper for OpenCV Yolo (darknet)
 
 ![YoloSharp Detection](https://user-images.githubusercontent.com/179872/34451961-7eae720c-ed78-11e7-96bf-baa5d0a3f835.png)
 
-なお、OpenCV 版の Yolo は、現在 CPU版のみ対応しています。
+OpenCL (FP16を含む) / OpenVINO などをサポートしており、NVIDIA, AMD, Intel GPU などを利用することが可能です。CUDA はサポートしていません。
 
 ## ビルド方法
 1．opencv-3.4.3-vc14_vc15.exe を[ダウンロード](https://github.com/opencv/opencv/releases/tag/3.4.3)して、c:\opencv343 フォルダに展開します

@@ -22,7 +22,7 @@ using namespace System::IO;
 
 #include <msclr/gcroot.h>
 
-// Darknet YOLOv2 .NET Framework C# wrapper (for OpenCV 3.3.1/3.4) 
+// Darknet YOLOv2/v3 .NET Framework C# wrapper (for OpenCV 3.3.1/3.4) 
 namespace YoloSharp {
 	public enum class Target : int { CPU, OpenCL, OpenCLFp16, VPU };
 	public enum class Backend : int { Auto, Halide, OpenVINO, OpenCV };
@@ -50,7 +50,7 @@ namespace YoloSharp {
 		}
 	};
 	/// <summary>
-	/// Darknet YOLOv2 C# wrapper
+	/// Darknet YOLOv2/v3 C# wrapper
 	/// </summary>
 	public ref class Yolo
 	{
@@ -62,6 +62,7 @@ namespace YoloSharp {
 		System::String^ _weights;
 		cli::array<System::String^>^ _names;
 		dnn::Net *_net;
+		vector<cv::String> *_layerNames;
 
 	public:
 		/// <summary>
@@ -112,6 +113,16 @@ namespace YoloSharp {
 			std::string modelBinary = convertToStdString(_weights);
 
 			this->_net = new dnn::Net(readNetFromDarknet(modelConfiguration, modelBinary));
+			vector<int> outLayers = _net->getUnconnectedOutLayers();
+
+			this->_layerNames = new vector<cv::String>();
+			vector<cv::String> layersNames = _net->getLayerNames();
+			_layerNames->resize(outLayers.size());
+			for (size_t i = 0; i < outLayers.size(); ++i)
+			{
+				cv::String layerName = layersNames[outLayers[i] - 1];
+				(*_layerNames)[i] = layerName;
+			}
 		}
 
 		cli::array<Data^>^ detectMain(Bitmap^ bitmap, float confidenceThreshold) {
@@ -123,31 +134,31 @@ namespace YoloSharp {
 			cv::Mat inputBlob = blobFromImage(resized, 1 / 255.F);
 			_net->setInput(inputBlob, (cv::String) "data");
 
-			cv::Mat detectionMat = _net->forward((cv::String) "detection_out");
 
-			List<Data^>^ results = gcnew List<Data^>(detectionMat.rows);
-			for (int i = 0; i < detectionMat.rows; i++)
+			vector<Mat> detectionMat;
+			_net->forward(detectionMat, *_layerNames);
+			List<Data^>^ results = gcnew List<Data^>();
+			for (size_t i = 0; i < detectionMat.size(); ++i)
 			{
-				const int probability_index = 5;
-				const int probability_size = detectionMat.cols - probability_index;
-				float *prob_array_ptr = &detectionMat.at<float>(i, probability_index);
-
-				size_t objectClass = std::max_element(prob_array_ptr, prob_array_ptr + probability_size) - prob_array_ptr;
-				float confidence = detectionMat.at<float>(i, (int)objectClass + probability_index);
-
-				if (confidence > confidenceThreshold)
+				float* data = (float*)detectionMat[i].data;
+				for (int j = 0; j < detectionMat[i].rows; ++j, data += detectionMat[i].cols)
 				{
-					float cx = detectionMat.at<float>(i, 0);
-					float cy = detectionMat.at<float>(i, 1);
-					float width = detectionMat.at<float>(i, 2);
-					float height = detectionMat.at<float>(i, 3);
+					Mat scores = detectionMat[i].row(j).colRange(5, detectionMat[i].cols);
+					cv::Point classIdPoint;
+					double confidence;
+					minMaxLoc(scores, 0, &confidence, 0, &classIdPoint);
+					if (confidence > confidenceThreshold)
+					{
+						int centerX = (int)(data[0] * frame.cols);
+						int centerY = (int)(data[1] * frame.rows);
+						int width = (int)(data[2] * frame.cols);
+						int height = (int)(data[3] * frame.rows);
+						int left = centerX - width / 2;
+						int top = centerY - height / 2;
 
-					int xx = (int)((cx - width / 2.) * frame.cols);
-					int yy = (int)((cy - height / 2.) * frame.rows);
-					int ww = (int)(width * frame.cols);
-					int hh = (int)(height * frame.rows);
-					Data^ d = gcnew Data(_names[objectClass], objectClass, confidence, xx, yy, ww, hh);
-					results->Add(d);
+						Data^ d = gcnew Data(_names[classIdPoint.x], classIdPoint.x, (float)confidence, left, top, width, height);
+						results->Add(d);
+					}
 				}
 			}
 			cvReleaseImage(&iplImage);
