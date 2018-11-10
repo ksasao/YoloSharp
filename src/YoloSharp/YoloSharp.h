@@ -24,7 +24,8 @@ using namespace System::IO;
 
 // Darknet YOLOv2 .NET Framework C# wrapper (for OpenCV 3.3.1/3.4) 
 namespace YoloSharp {
-
+	public enum class Target : int { CPU, OpenCL, OpenCLFp16, VPU };
+	public enum class Backend : int { Auto, Halide, OpenVINO, OpenCV };
 	public ref class Data
 	{
 	public:
@@ -94,6 +95,12 @@ namespace YoloSharp {
 			cli::array<System::String^>^ get(){
 				return _names;
 			}
+		}
+		void SetPreferableBackend(Backend backend) {
+			_net->setPreferableTarget((int)backend);
+		}
+		void SetPreferableTarget(Target target) {
+			_net->setPreferableTarget((int)target);
 		}
 	private:
 		void initialize(System::String^ config, System::String^ weights, System::String^ names) {

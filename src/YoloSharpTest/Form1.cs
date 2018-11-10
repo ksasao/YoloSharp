@@ -36,6 +36,21 @@ namespace YoloSharpTest
             var model = LoadModel(_modelPath);
             _yolo = model.Item1;
             _aspectRatio = model.Item2;
+
+            foreach (var b in Enum.GetValues(typeof(Backend)))
+            {
+                this.comboBoxBackend.Items.Add(b.ToString());
+            }
+            this.comboBoxBackend.SelectedIndex = 0;
+            this.comboBoxBackend.Enabled = true;
+
+
+            foreach (var t in Enum.GetValues(typeof(Target)))
+            {
+                this.comboBoxTarget.Items.Add(t.ToString());
+            }
+            this.comboBoxTarget.SelectedIndex = 0;
+            this.comboBoxTarget.Enabled = true;
         }
 
         private Tuple<Yolo,float> LoadModel(string modelPath)
@@ -236,6 +251,18 @@ namespace YoloSharpTest
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             _brush.Dispose();
+        }
+
+        private void comboBoxTarget_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _yolo.SetPreferableTarget((Target)this.comboBoxTarget.SelectedIndex);
+            this.comboBoxTarget.Enabled = false; // You can change PreferableTarget once.
+        }
+
+        private void comboBoxBackend_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _yolo.SetPreferableBackend((Backend)this.comboBoxBackend.SelectedIndex);
+            this.comboBoxBackend.Enabled = false; // You can change PreferableTarget once.
         }
     }
 }
