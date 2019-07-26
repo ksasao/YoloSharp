@@ -90,6 +90,12 @@ namespace YoloSharp {
 			return detectMain(bitmap, confidenceThreshold);
 		}
 		/// <summary>
+		/// Detect Objects and apply NMS
+		/// </summary>
+		cli::array<Data^>^ Detect(Bitmap^ bitmap, float confidenceThreshold, float NMSThreshold) {
+			return detectMain(bitmap, confidenceThreshold, NMSThreshold);
+		}
+		/// <summary>
 		/// Return class names of this model
 		/// </summary>
 		property cli::array<System::String^>^ ClassNames {
@@ -134,7 +140,6 @@ namespace YoloSharp {
 			cv::Mat inputBlob = blobFromImage(resized, 1 / 255.F);
 			_net->setInput(inputBlob, (cv::String) "data");
 
-
 			vector<Mat> detectionMat;
 			_net->forward(detectionMat, *_layerNames);
 			List<Data^>^ results = gcnew List<Data^>();
@@ -161,6 +166,66 @@ namespace YoloSharp {
 					}
 				}
 			}
+			cvReleaseImage(&iplImage);
+			return results->ToArray();
+		}
+
+		cli::array<Data^>^ detectMain(Bitmap^ bitmap, float confidenceThreshold, float NMSThreshold) {
+			auto iplImage = getIplImage(bitmap);
+			cv::Mat frame = cv::cvarrToMat(iplImage);
+			cv::Mat resized;
+			cv::resize(frame, resized, cv::Size(network_width, network_height));
+
+			// set input
+			cv::Mat inputBlob = blobFromImage(resized, 1 / 255.F);
+			_net->setInput(inputBlob, (cv::String) "data");
+
+			// detection
+			vector<Mat> detectionMat;
+			_net->forward(detectionMat, *_layerNames);
+
+			// Store information to perform NMS 
+			std::vector<Rect> boxes;
+			std::vector<int> classIds, indices;
+			vector<float> confidences;
+			for (size_t i = 0; i < detectionMat.size(); ++i)
+			{
+				float* data = (float*)detectionMat[i].data;
+				for (int j = 0; j < detectionMat[i].rows; ++j, data += detectionMat[i].cols)
+				{
+					Mat scores = detectionMat[i].row(j).colRange(5, detectionMat[i].cols);
+					cv::Point classIdPoint;
+					double confidence;
+					minMaxLoc(scores, 0, &confidence, 0, &classIdPoint);
+					int centerX = (int)(data[0] * frame.cols);
+					int centerY = (int)(data[1] * frame.rows);
+					int width = (int)(data[2] * frame.cols);
+					int height = (int)(data[3] * frame.rows);
+					int left = centerX - width / 2;
+					int top = centerY - height / 2;
+
+					boxes.push_back(Rect(left, top, width, height));
+					confidences.push_back((float)confidence);
+					classIds.push_back(classIdPoint.x);
+				}
+			}
+
+			// perform NMS
+			NMSBoxes(boxes, confidences, confidenceThreshold, NMSThreshold, indices);
+
+			// Save result using "Data" structure
+			List<Data^>^ results = gcnew List<Data^>();
+			for (size_t i = 0; i < indices.size(); ++i) {
+				int classIdPoint_x = classIds[indices[i]];
+				Rect box = boxes[indices[i]];
+				int left = box.x;
+				int top = box.y;
+				int width = box.width;
+				int height = box.height;
+				Data^ d = gcnew Data(_names[classIdPoint_x], classIdPoint_x, confidences[indices[i]], left, top, width, height);
+				results->Add(d);
+			}
+
 			cvReleaseImage(&iplImage);
 			return results->ToArray();
 		}
