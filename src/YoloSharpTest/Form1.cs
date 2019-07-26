@@ -13,8 +13,14 @@ using YoloSharp;
 
 namespace YoloSharpTest
 {
+
     public partial class Form1 : Form
     {
+        const float DEFAULT_CONFIDENCE = 0.5f;
+        float confidence_thresh;
+        float nms_thresh;
+        bool use_NMS;
+
         string _modelPath = @"model";
         string _resultPath = @"result";
 
@@ -51,6 +57,11 @@ namespace YoloSharpTest
             }
             this.comboBoxTarget.SelectedIndex = 0;
             this.comboBoxTarget.Enabled = true;
+
+            // NMS init
+            confidence_thresh = (float)this.num_confidence.Value;
+            nms_thresh = (float)this.num_nms.Value;
+            use_NMS = this.cbxUseNMS.Checked;
         }
 
         private Tuple<Yolo,float> LoadModel(string modelPath)
@@ -98,7 +109,12 @@ namespace YoloSharpTest
                     // 推論
                     Stopwatch watch = new Stopwatch();
                     watch.Start();
-                    var result = _yolo.Detect(_bitmap, 0.5f);
+                    Data[] result;
+                    if (use_NMS)
+                         result = _yolo.Detect(_bitmap, confidence_thresh, nms_thresh);
+                    else
+                        result = _yolo.Detect(_bitmap, DEFAULT_CONFIDENCE);
+
                     watch.Stop();
 
                     // 結果を描画
@@ -125,6 +141,8 @@ namespace YoloSharpTest
                     }
                     this.pictureBox1.Image = _bitmap;
                     AppendMessage($"{result.Length} object(s), {watch.ElapsedMilliseconds} ms");
+                    if (use_NMS)
+                        AppendMessage("Using NMS");
                     this.Update(); // 画面再描画
 
                     // 結果を保存
@@ -264,5 +282,23 @@ namespace YoloSharpTest
             _yolo.SetPreferableBackend((Backend)this.comboBoxBackend.SelectedIndex);
             this.comboBoxBackend.Enabled = false; // You can change PreferableTarget once.
         }
+
+        private void cbxUseNMS_CheckedChanged(object sender, EventArgs e)
+        {
+            this.use_NMS = this.cbxUseNMS.Checked;
+            this.num_confidence.Enabled = this.cbxUseNMS.Checked;
+            this.num_nms.Enabled = this.cbxUseNMS.Checked;
+        }
+
+        private void num_confidence_ValueChanged(object sender, EventArgs e)
+        {
+            confidence_thresh = (float)this.num_confidence.Value;
+        }
+
+        private void num_nms_ValueChanged(object sender, EventArgs e)
+        {
+            nms_thresh = (float)this.num_nms.Value;
+        }
+
     }
 }
