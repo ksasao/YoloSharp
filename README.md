@@ -11,7 +11,7 @@ A .NET wrapper for OpenCV Yolo v2/v3 (darknet)
 - Visual Studio 2017
 
 ## サンプル
-- [YoloSharp Sample Application](https://1drv.ms/f/s!AtVeMj_gKPtbpoUW41zX4dyXA32q2g) (2018/1/28更新)
+- [YoloSharp Sample Application](https://github.com/ksasao/YoloSharp/releases/download/v1.0/YoloSharpSample_vs2015_opencv343.zip) (2018/1/28更新)
 
 画像ファイルを Drag & Drop すると物体を判別し、結果を result フォルダに保存します。
 
