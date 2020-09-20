@@ -104,7 +104,7 @@ namespace YoloSharp {
 			}
 		}
 		void SetPreferableBackend(Backend backend) {
-			_net->setPreferableTarget((int)backend);
+			_net->setPreferableBackend((int)backend);
 		}
 		void SetPreferableTarget(Target target) {
 			_net->setPreferableTarget((int)target);
