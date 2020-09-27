@@ -109,11 +109,15 @@ namespace YoloSharpTest
                     // 推論
                     Stopwatch watch = new Stopwatch();
                     watch.Start();
-                    Data[] result;
+                    Data[] result = null;
                     if (use_NMS)
-                         result = _yolo.Detect(_bitmap, confidence_thresh, nms_thresh);
+                    {
+                        result = _yolo.Detect(_bitmap, confidence_thresh, nms_thresh);
+                    }
                     else
+                    {
                         result = _yolo.Detect(_bitmap, DEFAULT_CONFIDENCE);
+                    }
 
                     watch.Stop();
 

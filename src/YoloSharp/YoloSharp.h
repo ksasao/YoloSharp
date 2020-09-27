@@ -2,25 +2,15 @@
 
 #pragma once
 #include <opencv2/dnn.hpp>
-#include <opencv2/dnn/shape_utils.hpp>
-#include <opencv2/imgproc.hpp>
-#include <opencv2/highgui.hpp>
+
 using namespace cv;
 using namespace cv::dnn;
-
-#include <fstream>
-#include <iostream>
-#include <algorithm>
-#include <cstdlib>
 
 using namespace std;
 using namespace System;
 using namespace System::Drawing;
 using namespace System::Collections::Generic;
 using namespace System::IO;
-
-
-#include <msclr/gcroot.h>
 
 // Darknet YOLOv2/v3 .NET Framework C# wrapper (for OpenCV 3.3.1/3.4) 
 namespace YoloSharp {
@@ -132,12 +122,8 @@ namespace YoloSharp {
 		}
 
 		cli::array<Data^>^ detectMain(Bitmap^ bitmap, float confidenceThreshold) {
-			auto iplImage = getIplImage(bitmap);
-			cv::Mat frame = cv::cvarrToMat(iplImage);
-			cv::Mat resized;
-			cv::resize(frame, resized, cv::Size(network_width, network_height));
-
-			cv::Mat inputBlob = blobFromImage(resized, 1 / 255.F);
+			cv::Mat frame = convertToMat(bitmap);
+			cv::Mat inputBlob = blobFromImage(frame, 1 / 255.F, cv::Size(network_width, network_height),cv::Scalar(0,0,0), true, false);
 			_net->setInput(inputBlob, (cv::String) "data");
 
 			vector<Mat> detectionMat;
@@ -166,18 +152,12 @@ namespace YoloSharp {
 					}
 				}
 			}
-			cvReleaseImage(&iplImage);
 			return results->ToArray();
 		}
 
 		cli::array<Data^>^ detectMain(Bitmap^ bitmap, float confidenceThreshold, float NMSThreshold) {
-			auto iplImage = getIplImage(bitmap);
-			cv::Mat frame = cv::cvarrToMat(iplImage);
-			cv::Mat resized;
-			cv::resize(frame, resized, cv::Size(network_width, network_height));
-
-			// set input
-			cv::Mat inputBlob = blobFromImage(resized, 1 / 255.F);
+			cv::Mat frame = convertToMat(bitmap);
+			cv::Mat inputBlob = blobFromImage(frame, 1 / 255.F, cv::Size(network_width, network_height), cv::Scalar(0, 0, 0), true, false);
 			_net->setInput(inputBlob, (cv::String) "data");
 
 			// detection
@@ -226,7 +206,6 @@ namespace YoloSharp {
 				results->Add(d);
 			}
 
-			cvReleaseImage(&iplImage);
 			return results->ToArray();
 		}
 		 
@@ -242,18 +221,30 @@ namespace YoloSharp {
 			os = chars;
 			Marshal::FreeHGlobal(IntPtr((void*)chars));
 		}
-		IplImage* getIplImage(Bitmap^ bitmap) {
-			IplImage *image = cvCreateImage(cvSize(bitmap->Width, bitmap->Height), IPL_DEPTH_8U, 3);
 
-			Imaging::BitmapData^ data = bitmap->LockBits(
+		cv::Mat convertToMat(Bitmap^ bitmap)
+		{
+			Imaging::BitmapData ^bitmapData = bitmap->LockBits(
 				Rectangle(0, 0, bitmap->Width, bitmap->Height),
 				Imaging::ImageLockMode::ReadOnly,
 				Imaging::PixelFormat::Format24bppRgb
 			);
-			memcpy(image->imageData, data->Scan0.ToPointer(), image->imageSize);
-			bitmap->UnlockBits(data);
-
-			return image;
+			try {
+				cv::Mat mat = cv::Mat(bitmap->Height, bitmap->Width, CV_8UC3);
+				uchar *ptr = (uchar *)bitmapData->Scan0.ToPointer();
+				int stride = bitmapData->Stride;
+				int height = bitmap->Height;
+				int width = bitmap->Width;
+				for (int y = 0; y < height; y++) {
+					uchar *src = (uchar *)&ptr[y * stride];
+					uchar *dest = mat.ptr(y);
+					memcpy(dest, src, 3 * width);
+				}
+				return mat;
+			}
+			finally {
+				bitmap->UnlockBits(bitmapData);
+			}
 		}
 	};
 }
