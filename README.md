@@ -21,6 +21,19 @@ A .NET wrapper for OpenCV Yolo v2/v3 (darknet)
 
 OpenCL (FP16を含む) / OpenVINO などをサポートしており、NVIDIA, AMD, Intel GPU などを利用することが可能です。CUDA はサポートしていません。
 
+### 外部GPUの利用について
+OpenCL を設定しているにもかかわらず、GPU が利用されていないように見える場合は下記の設定を行ってください。ただし、[CPUよりも遅い場合がある](https://twitter.com/ksasao/status/1310145752186798081)ようです。
+
+1. ビデオカードに適したOpenCL用のドライバーをインストールする(NVIDIA の場合は CUDA Toolkitに含まれる)
+2. 環境変数に以下の値を設定する
+
+|環境変数|値|
+|---|---|
+|OPENCV_DNN_OPENCL_ALLOW_ALL_DEVICES|1|
+|OPENCV_OPENCL_DEVICE|:GPU:0|
+
+* OPENCV_OPENCL_DEVICE の値は、環境にあわせて ```:GPU:1``` などに変更してください。
+
 ## ビルド方法
 1．opencv-3.4.3-vc14_vc15.exe を[ダウンロード](https://github.com/opencv/opencv/releases/tag/3.4.3)して、c:\opencv343 フォルダに展開します
 ![Download Path](https://user-images.githubusercontent.com/179872/47597072-640b1500-d9c6-11e8-96b5-003fe12cdb24.png)
